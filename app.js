@@ -778,10 +778,7 @@ function renderAuthBg() {
   const flags = FLAG_CODES.map(
     (c) => `<img src="https://flagcdn.com/w80/${c}.png" alt="" loading="lazy">`
   ).join("");
-  bg.innerHTML =
-    `<div class="flags">${flags}${flags}${flags}</div>` +
-    PLAYER_SVG.replace('class="silhouette"', 'class="silhouette left"') +
-    PLAYER_SVG.replace('class="silhouette"', 'class="silhouette right"');
+  bg.innerHTML = `<div class="flags">${flags}${flags}${flags}</div>`;
   bg.dataset.done = "1";
 }
 

@@ -409,7 +409,12 @@ function renderLeaderboard() {
     b.onclick = async () => {
       try {
         const r = await apiCall("getPredictions", { username: b.dataset.vlb });
-        showRecap(`👁 Tebakan ${r.name} (@${b.dataset.vlb})`, r.predictions || {});
+        const title = `👁 Tebakan ${r.name} (@${b.dataset.vlb})`;
+        if (r.hidden) {
+          showModal(title, `<p class="recap-empty">🔒 Tebakan peserta ini belum bisa dilihat — peserta belum <b>mengunci (submit)</b> tebakannya.</p>`);
+        } else {
+          showRecap(title, r.predictions || {});
+        }
       } catch (e) { alert(e.message); }
     };
   });

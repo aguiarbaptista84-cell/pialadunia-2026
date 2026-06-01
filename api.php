@@ -223,17 +223,24 @@ if ($action === 'submit') {
 
 /* ---------- LIHAT TEBAKAN PESERTA (admin: siapa saja; peserta: diri sendiri) ---------- */
 if ($action === 'getPredictions') {
-  // Semua peserta yang sudah login boleh melihat tebakan peserta lain.
   $target = trim($body['username'] ?? '');
+  $stmt = $db->prepare("SELECT name, submitted FROM users WHERE username=?");
+  $stmt->bind_param('s', $target); $stmt->execute();
+  $u = $stmt->get_result()->fetch_assoc();
+  $name = $u['name'] ?? $target;
+  $isSubmitted = $u ? ((int)$u['submitted'] === 1) : false;
+  $isSelf = strtolower($target) === strtolower($me['username']);
+  // Peserta lain hanya boleh lihat bila target sudah mengunci tebakan.
+  $canView = ($me['role'] === 'admin') || $isSelf || $isSubmitted;
+  if (!$canView) {
+    out(['hidden' => true, 'name' => $name, 'username' => $target, 'submitted' => false]);
+  }
   $preds = [];
   $stmt = $db->prepare("SELECT mkey,res FROM predictions WHERE username=?");
   $stmt->bind_param('s', $target); $stmt->execute();
   $rr = $stmt->get_result();
   while ($x = $rr->fetch_assoc()) $preds[$x['mkey']] = $x['res'];
-  $stmt = $db->prepare("SELECT name FROM users WHERE username=?");
-  $stmt->bind_param('s', $target); $stmt->execute();
-  $u = $stmt->get_result()->fetch_assoc();
-  out(['predictions' => (object)$preds, 'name' => $u['name'] ?? $target, 'username' => $target]);
+  out(['predictions' => (object)$preds, 'name' => $name, 'username' => $target, 'submitted' => $isSubmitted]);
 }
 
 /* ================= AKSI ADMIN ================= */

@@ -1,0 +1,7 @@
+# OS / editor
+Thumbs.db
+.DS_Store
+*.log
+
+# Catatan: config.php berisi placeholder (tanpa password asli).
+# Isi password database hanya di server idcloudhost, JANGAN commit password asli.

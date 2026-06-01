@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Penyisihan Piala Dunia 2026</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ===== Overlay Registrasi / Login ===== -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-head">
+        <span class="ball">⚽</span>
+        <h1>Piala Dunia 2026</h1>
+        <p>Masuk dengan username & password Anda</p>
+        <p id="regDeadline" class="reg-deadline"></p>
+      </div>
+
+      <form id="authForm" class="auth-form" autocomplete="off">
+        <label>
+          Username
+          <input id="inpUser" type="text" placeholder="username dari admin" required autocomplete="username" />
+        </label>
+        <label>
+          Password
+          <input id="inpPass" type="password" placeholder="password dari admin" required autocomplete="current-password" />
+        </label>
+        <p id="authError" class="auth-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+      </form>
+
+      <div class="auth-hint">
+        Belum punya akun? Hubungi <b>admin</b> untuk didaftarkan dan menerima username &amp; password.
+      </div>
+    </div>
+  </div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="ball">⚽</span>
+      <div>
+        <h1>Piala Dunia 2026</h1>
+        <p>Dashboard Babak Penyisihan Grup</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="userBadge" class="user-badge"></div>
+      <button id="btnReset" class="btn btn-ghost">↺ Reset Pilihan</button>
+      <button id="btnLogout" class="btn btn-ghost">⎋ Keluar</button>
+    </div>
+  </header>
+
+  <div id="adminBanner" class="admin-banner hidden">
+    🔑 <b>Login sebagai ADMIN.</b> Daftarkan peserta di panel bawah & klik hasil tiap laga untuk menetapkan hasil resmi. Skor peserta otomatis dihitung.
+  </div>
+
+  <section id="adminPanel" class="admin-panel hidden"></section>
+
+  <main>
+    <section class="summary" id="summary"></section>
+
+    <section id="saveBar" class="save-bar"></section>
+
+    <section class="block leaderboard" id="leaderboard"></section>
+
+    <section class="block results-board" id="resultsBoard"></section>
+
+    <nav class="group-tabs" id="groupTabs"></nav>
+
+    <section id="groupContainer"></section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Skor tebakan: Benar = <b>10</b> · Salah = <b>0</b>. Data tersimpan di server & sinkron otomatis antar perangkat.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

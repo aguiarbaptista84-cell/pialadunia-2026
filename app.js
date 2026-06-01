@@ -486,6 +486,10 @@ async function submitPredictions() {
 function renderAdminPanel() {
   const panel = document.getElementById("adminPanel");
   if (!adminMode) { panel.classList.add("hidden"); panel.innerHTML = ""; return; }
+  // Jangan render ulang saat admin sedang mengetik di form pendaftaran,
+  // supaya isian tidak terhapus oleh auto-refresh 15 detik.
+  const activeId = document.activeElement ? document.activeElement.id : "";
+  if (panel.innerHTML && ["rgName", "rgPhone", "rgUser", "rgPass"].includes(activeId)) return;
   panel.classList.remove("hidden");
 
   const submitted = users.filter((u) => u.submitted).length;
@@ -570,8 +574,15 @@ function renderAdminPanel() {
       username: document.getElementById("rgUser").value.trim(),
       password: document.getElementById("rgPass").value.trim(),
     };
-    try { await apiCall("registerUser", data); await refreshState(); }
-    catch (ex) { err.textContent = ex.message; }
+    try {
+      await apiCall("registerUser", data);
+      err.textContent = "";
+      await refreshState();
+      alert(`Peserta "${data.name}" terdaftar.\nUsername: ${data.username}\nPassword: ${data.password}`);
+    } catch (ex) {
+      err.textContent = ex.message;
+      alert("Gagal mendaftarkan: " + ex.message);
+    }
   };
 
   panel.querySelectorAll("[data-pw]").forEach((b) => {

@@ -755,8 +755,39 @@ const inpUser = document.getElementById("inpUser");
 const inpPass = document.getElementById("inpPass");
 const authError = document.getElementById("authError");
 
+// Kode ISO bendera (flagcdn) untuk 48 tim peserta WC 2026
+const FLAG_CODES = [
+  "mx", "za", "kr", "cz", "ca", "ba", "qa", "ch", "br", "ma", "ht", "gb-sct",
+  "us", "py", "au", "tr", "de", "cw", "ci", "ec", "nl", "jp", "se", "tn",
+  "be", "eg", "ir", "nz", "es", "cv", "sa", "uy", "fr", "sn", "iq", "no",
+  "ar", "dz", "at", "jo", "pt", "cd", "uz", "co", "gb-eng", "hr", "gh", "pa",
+];
+const PLAYER_SVG = `<svg class="silhouette" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="100" cy="40" r="26"/>
+  <rect x="74" y="66" width="52" height="120" rx="24"/>
+  <rect x="48" y="80" width="22" height="86" rx="11" transform="rotate(28 59 80)"/>
+  <rect x="130" y="80" width="22" height="86" rx="11" transform="rotate(-30 141 80)"/>
+  <rect x="78" y="176" width="22" height="130" rx="11" transform="rotate(12 89 176)"/>
+  <rect x="100" y="176" width="22" height="130" rx="11" transform="rotate(-34 111 176)"/>
+  <circle cx="150" cy="302" r="22"/>
+</svg>`;
+
+function renderAuthBg() {
+  const bg = document.getElementById("authBg");
+  if (!bg || bg.dataset.done) return; // cukup sekali
+  const flags = FLAG_CODES.map(
+    (c) => `<img src="https://flagcdn.com/w80/${c}.png" alt="" loading="lazy">`
+  ).join("");
+  bg.innerHTML =
+    `<div class="flags">${flags}${flags}${flags}</div>` +
+    PLAYER_SVG.replace('class="silhouette"', 'class="silhouette left"') +
+    PLAYER_SVG.replace('class="silhouette"', 'class="silhouette right"');
+  bg.dataset.done = "1";
+}
+
 function showAuth() {
   stopPolling();
+  renderAuthBg();
   authOverlay.classList.remove("hidden");
   authError.textContent = "";
   authForm.reset();

@@ -272,7 +272,48 @@ tbody tr.qualify .pos { background: var(--win); color: #04230f; }
 }
 .auth-overlay.hidden { display: none; }
 
+/* Latar login: bendera negara + siluet pemain */
+.auth-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.auth-bg .flags {
+  position: absolute;
+  inset: -12%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-content: center;
+  justify-content: center;
+  opacity: 0.14;
+  transform: rotate(-8deg);
+}
+.auth-bg .flags img {
+  width: 52px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.auth-bg .silhouette {
+  position: absolute;
+  bottom: -8px;
+  height: 72%;
+  max-height: 540px;
+  width: auto;
+  fill: #213452;
+  opacity: 0.45;
+}
+.auth-bg .silhouette.right { right: -14px; }
+.auth-bg .silhouette.left { left: -14px; transform: scaleX(-1); }
+/* lapisan gelap agar kotak login tetap terbaca */
+.auth-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px 320px at 50% 45%, rgba(7, 13, 24, 0.55), rgba(7, 13, 24, 0.82));
+}
+
 .auth-card {
+  position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 420px;
   background: var(--panel);

@@ -333,11 +333,11 @@ tbody tr.qualify .pos { background: var(--win); color: #04230f; }
 }
 .auth-head .ball { font-size: 42px; }
 .auth-logo-img {
-  width: 120px;
-  height: 120px;
-  object-fit: contain;
-  margin-bottom: 4px;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.45));
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 8px;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.5));
 }
 .auth-head h1 { margin: 8px 0 4px; font-size: 22px; }
 .auth-head p { margin: 0; color: var(--muted); font-size: 13px; }

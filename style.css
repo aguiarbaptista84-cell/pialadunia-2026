@@ -422,6 +422,7 @@ tbody tr.qualify .pos { background: var(--win); color: #04230f; }
   border-bottom: 1px solid var(--line);
   font-weight: 700;
 }
+.modal-actions { display: flex; gap: 8px; }
 .modal-body { padding: 14px 18px; overflow-y: auto; }
 
 .recap-count {

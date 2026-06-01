@@ -402,7 +402,10 @@ function renderLeaderboard() {
           <td>${r.phone}</td><td>${r.correct}</td><td>${r.judged}</td><td class="pts">${r.score}</td>
         </tr>`).join("")}</tbody></table>`;
   }
-  board.innerHTML = `<h2>🏆 Papan Skor Peserta (benar = ${POIN_BENAR}, salah = ${POIN_SALAH})</h2>${body}`;
+  board.innerHTML = `<h2>🏆 Papan Skor Peserta (benar = ${POIN_BENAR}, salah = ${POIN_SALAH})
+    <button id="lbExport" class="btn btn-ghost btn-sm" style="float:right">🖨️ Export Word</button></h2>${body}`;
+  const lb = document.getElementById("lbExport");
+  if (lb) lb.onclick = () => exportToWord("Papan Skor Peserta - Piala Dunia 2026", leaderboardWordHtml());
 }
 
 function renderResultsBoard() {
@@ -660,9 +663,68 @@ function buildRecapHtml(predMap) {
   return html;
 }
 
+let lastRecap = null; // { title, predMap } untuk export Word
 function showRecap(title, predMap) {
+  lastRecap = { title, predMap };
   showModal(title, buildRecapHtml(predMap));
 }
+
+/* ---------- Export ke Microsoft Word (.doc) ---------- */
+function exportToWord(title, innerHtml) {
+  const doc =
+    "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+    "xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>" +
+    "<head><meta charset='utf-8'><title>" + title + "</title><style>" +
+    "body{font-family:Arial,sans-serif;font-size:11pt;color:#000;}" +
+    "h1{font-size:16pt;margin:0 0 4px;}h2{font-size:12pt;margin:14px 0 4px;border-bottom:1px solid #000;}" +
+    "table{border-collapse:collapse;width:100%;margin-bottom:8px;}" +
+    "th,td{border:1px solid #777;padding:4px 8px;text-align:left;font-size:10pt;}" +
+    "th{background:#eee;}.sub{color:#444;font-size:10pt;margin:0 0 10px;}" +
+    "</style></head><body><h1>" + title + "</h1>" +
+    "<p class='sub'>Piala Dunia 2026 — dicetak " + new Date().toLocaleString("id-ID") + "</p>" +
+    innerHtml + "</body></html>";
+  const blob = new Blob(["﻿", doc], { type: "application/msword" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = title.replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "") + ".doc";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// Versi tabel (untuk Word) dari rekap tebakan
+function recapWordHtml(predMap) {
+  let html = `<p class="sub">Jumlah dipilih: ${countFilled(predMap)}/${TOTAL_MATCHES} laga</p>`;
+  Object.keys(FIXTURES).forEach((g) => {
+    const teams = GROUPS[g];
+    html += `<h2>Grup ${g}</h2><table><tr><th>Laga</th><th>Pilihan</th></tr>`;
+    FIXTURES[g].forEach((fx, idx) => {
+      const res = predMap[matchKey(g, idx)];
+      const pick = res === "home" ? teams[fx.h] + " menang"
+        : res === "away" ? teams[fx.a] + " menang"
+        : res === "draw" ? "Seri" : "—";
+      html += `<tr><td>${teams[fx.h]} vs ${teams[fx.a]}</td><td>${pick}</td></tr>`;
+    });
+    html += `</table>`;
+  });
+  return html;
+}
+
+// Versi tabel (untuk Word) dari papan skor
+function leaderboardWordHtml() {
+  let html = `<table><tr><th>#</th><th>Peserta</th><th>No. TLP</th><th>Benar</th><th>Dinilai</th><th>Skor</th></tr>`;
+  leaderboard.forEach((r, i) => {
+    html += `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.phone}</td><td>${r.correct}</td><td>${r.judged}</td><td>${r.score}</td></tr>`;
+  });
+  return html + `</table>`;
+}
+
+document.getElementById("modalExport").onclick = () => {
+  if (!lastRecap) return;
+  exportToWord(lastRecap.title.replace(/[^\w\s\-@.]/g, "").trim(), recapWordHtml(lastRecap.predMap));
+};
 
 // Peserta: rekap tebakan sendiri (pakai data di memori)
 document.getElementById("btnRecap").onclick = () => {

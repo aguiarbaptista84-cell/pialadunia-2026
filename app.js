@@ -402,10 +402,7 @@ function renderLeaderboard() {
           <td>${r.phone}</td><td>${r.correct}</td><td>${r.judged}</td><td class="pts">${r.score}</td>
         </tr>`).join("")}</tbody></table>`;
   }
-  board.innerHTML = `<h2>🏆 Papan Skor Peserta (benar = ${POIN_BENAR}, salah = ${POIN_SALAH})
-    <button id="lbExport" class="btn btn-ghost btn-sm" style="float:right">🖨️ Export Word</button></h2>${body}`;
-  const lb = document.getElementById("lbExport");
-  if (lb) lb.onclick = () => exportToWord("Papan Skor Peserta - Piala Dunia 2026", leaderboardWordHtml());
+  board.innerHTML = `<h2>🏆 Papan Skor Peserta (benar = ${POIN_BENAR}, salah = ${POIN_SALAH})</h2>${body}`;
 }
 
 function renderResultsBoard() {
@@ -632,6 +629,8 @@ function renderAdminPanel() {
 function showModal(title, html) {
   document.getElementById("modalTitle").innerHTML = title;
   document.getElementById("modalBody").innerHTML = html;
+  // Hanya admin yang boleh print/export hasil
+  document.getElementById("modalExport").style.display = adminMode ? "" : "none";
   document.getElementById("modal").classList.remove("hidden");
 }
 function hideModal() {
@@ -710,15 +709,6 @@ function recapWordHtml(predMap) {
     html += `</table>`;
   });
   return html;
-}
-
-// Versi tabel (untuk Word) dari papan skor
-function leaderboardWordHtml() {
-  let html = `<table><tr><th>#</th><th>Peserta</th><th>No. TLP</th><th>Benar</th><th>Dinilai</th><th>Skor</th></tr>`;
-  leaderboard.forEach((r, i) => {
-    html += `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.phone}</td><td>${r.correct}</td><td>${r.judged}</td><td>${r.score}</td></tr>`;
-  });
-  return html + `</table>`;
 }
 
 document.getElementById("modalExport").onclick = () => {

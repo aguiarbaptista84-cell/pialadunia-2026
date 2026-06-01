@@ -395,14 +395,24 @@ function renderLeaderboard() {
     body = `<div class="user-list-empty" style="padding:14px 18px">Belum ada peserta.</div>`;
   } else {
     body = `<table>
-      <thead><tr><th class="team-col">Peserta</th><th>No. TLP</th><th>Benar</th><th>Dinilai</th><th>Skor</th></tr></thead>
+      <thead><tr><th class="team-col">Peserta</th><th>No. TLP</th><th>Benar</th><th>Dinilai</th><th>Skor</th><th>Tebakan</th></tr></thead>
       <tbody>${leaderboard.map((r, i) => `
         <tr class="${currentUser && r.username === currentUser.username ? "me" : ""}">
           <td class="team-col"><span class="pos">${i + 1}</span>${r.name}</td>
           <td>${r.phone}</td><td>${r.correct}</td><td>${r.judged}</td><td class="pts">${r.score}</td>
+          <td><button class="btn btn-ghost btn-sm" data-vlb="${r.username}">👁 Lihat</button></td>
         </tr>`).join("")}</tbody></table>`;
   }
   board.innerHTML = `<h2>🏆 Papan Skor Peserta (benar = ${POIN_BENAR}, salah = ${POIN_SALAH})</h2>${body}`;
+
+  board.querySelectorAll("[data-vlb]").forEach((b) => {
+    b.onclick = async () => {
+      try {
+        const r = await apiCall("getPredictions", { username: b.dataset.vlb });
+        showRecap(`👁 Tebakan ${r.name} (@${b.dataset.vlb})`, r.predictions || {});
+      } catch (e) { alert(e.message); }
+    };
+  });
 }
 
 function renderResultsBoard() {

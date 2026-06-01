@@ -223,10 +223,8 @@ if ($action === 'submit') {
 
 /* ---------- LIHAT TEBAKAN PESERTA (admin: siapa saja; peserta: diri sendiri) ---------- */
 if ($action === 'getPredictions') {
+  // Semua peserta yang sudah login boleh melihat tebakan peserta lain.
   $target = trim($body['username'] ?? '');
-  if ($me['role'] !== 'admin' && strtolower($target) !== strtolower($me['username'])) {
-    fail('Tidak diizinkan.', 403);
-  }
   $preds = [];
   $stmt = $db->prepare("SELECT mkey,res FROM predictions WHERE username=?");
   $stmt->bind_param('s', $target); $stmt->execute();

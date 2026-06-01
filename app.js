@@ -224,6 +224,7 @@ function computeStandings(group) {
 function render() {
   document.getElementById("adminBanner").classList.toggle("hidden", !adminMode);
   document.getElementById("btnReset").style.display = adminMode ? "none" : "";
+  document.getElementById("btnRecap").style.display = adminMode ? "none" : "";
   renderBadge();
   renderSaveBar();
   renderAdminPanel();
@@ -507,6 +508,7 @@ function renderAdminPanel() {
       <td>${u.filled}/${TOTAL_MATCHES}</td>
       <td>${u.submitted ? "✅ " + fmtDateTime(u.submittedAt) : "— belum"}</td>
       <td class="ac-actions">
+        <button class="btn btn-ghost btn-sm" data-view="${u.username}">👁 Lihat Tebakan</button>
         <button class="btn btn-ghost btn-sm" data-pw="${u.username}">🔑 Reset PW</button>
         ${u.submitted ? `<button class="btn btn-ghost btn-sm" data-unlock="${u.username}">🔓 Buka Kunci</button>` : ""}
         <button class="btn btn-ghost btn-sm" data-del="${u.username}">🗑 Hapus</button>
@@ -585,6 +587,16 @@ function renderAdminPanel() {
     }
   };
 
+  panel.querySelectorAll("[data-view]").forEach((b) => {
+    b.onclick = async () => {
+      const u = users.find((x) => x.username === b.dataset.view);
+      try {
+        const r = await apiCall("getPredictions", { username: u.username });
+        showRecap(`👁 Tebakan ${r.name} (@${u.username})`, r.predictions || {});
+      } catch (e) { alert(e.message); }
+    };
+  });
+
   panel.querySelectorAll("[data-pw]").forEach((b) => {
     b.onclick = async () => {
       const u = users.find((x) => x.username === b.dataset.pw);
@@ -612,6 +624,51 @@ function renderAdminPanel() {
     };
   });
 }
+
+/* ---------- Modal & Rekap tebakan ---------- */
+function showModal(title, html) {
+  document.getElementById("modalTitle").innerHTML = title;
+  document.getElementById("modalBody").innerHTML = html;
+  document.getElementById("modal").classList.remove("hidden");
+}
+function hideModal() {
+  document.getElementById("modal").classList.add("hidden");
+}
+document.getElementById("modalClose").onclick = hideModal;
+document.getElementById("modal").onclick = (e) => { if (e.target.id === "modal") hideModal(); };
+
+// Bangun tampilan rekap dari peta tebakan { mkey: res }
+function buildRecapHtml(predMap) {
+  const filled = countFilled(predMap);
+  let html = `<div class="recap-count">${filled}/${TOTAL_MATCHES} laga dipilih</div>`;
+  Object.keys(FIXTURES).forEach((g) => {
+    const teams = GROUPS[g];
+    html += `<div class="recap-group"><div class="recap-gtitle">Grup ${g}</div>`;
+    FIXTURES[g].forEach((fx, idx) => {
+      const res = predMap[matchKey(g, idx)];
+      let pick;
+      if (res === "home") pick = `🏆 <b>${teams[fx.h]}</b>`;
+      else if (res === "away") pick = `🏆 <b>${teams[fx.a]}</b>`;
+      else if (res === "draw") pick = `🤝 Seri`;
+      else pick = `<span class="recap-empty">— belum dipilih</span>`;
+      html += `<div class="recap-row">
+        <span class="recap-match">${teams[fx.h]} <span class="recap-vs">vs</span> ${teams[fx.a]}</span>
+        <span class="recap-pick">${pick}</span></div>`;
+    });
+    html += `</div>`;
+  });
+  return html;
+}
+
+function showRecap(title, predMap) {
+  showModal(title, buildRecapHtml(predMap));
+}
+
+// Peserta: rekap tebakan sendiri (pakai data di memori)
+document.getElementById("btnRecap").onclick = () => {
+  if (adminMode || !currentUser) return;
+  showRecap(`📋 Tebakan Saya — ${currentUser.name}`, results);
+};
 
 /* ---------- Tombol header ---------- */
 document.getElementById("btnReset").onclick = async () => {

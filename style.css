@@ -389,6 +389,70 @@ tbody tr.qualify .pos { background: var(--win); color: #04230f; }
 .user-badge .ub-name { font-weight: 700; }
 .user-badge .ub-phone { color: var(--muted); }
 
+/* ===== Modal rekap tebakan ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 7, 18, 0.75);
+}
+.modal.hidden { display: none; }
+.modal-card {
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--line);
+  font-weight: 700;
+}
+.modal-body { padding: 14px 18px; overflow-y: auto; }
+
+.recap-count {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.recap-group { margin-bottom: 14px; }
+.recap-gtitle {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+.recap-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  padding: 4px 0;
+}
+.recap-match { color: var(--text); }
+.recap-vs { color: var(--muted); font-size: 11px; }
+.recap-pick { white-space: nowrap; color: var(--win); }
+.recap-empty { color: var(--muted); font-style: italic; }
+
 /* ===== Mode Admin / Hasil Resmi ===== */
 #btnAdmin.active-admin {
   background: #f59e0b;

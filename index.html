@@ -46,6 +46,7 @@
     </div>
     <div class="header-actions">
       <div id="userBadge" class="user-badge"></div>
+      <button id="btnRecap" class="btn btn-ghost">📋 Rekap Tebakan</button>
       <button id="btnReset" class="btn btn-ghost">↺ Reset Pilihan</button>
       <button id="btnLogout" class="btn btn-ghost">⎋ Keluar</button>
     </div>
@@ -74,6 +75,17 @@
   <footer class="app-footer">
     <p>Skor tebakan: Benar = <b>10</b> · Salah = <b>0</b>. Data tersimpan di server & sinkron otomatis antar perangkat.</p>
   </footer>
+
+  <!-- Modal rekap tebakan -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <span id="modalTitle"></span>
+        <button id="modalClose" class="btn btn-ghost btn-sm">✕ Tutup</button>
+      </div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

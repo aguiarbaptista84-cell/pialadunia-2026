@@ -221,6 +221,23 @@ if ($action === 'submit') {
   out(['ok' => true]);
 }
 
+/* ---------- LIHAT TEBAKAN PESERTA (admin: siapa saja; peserta: diri sendiri) ---------- */
+if ($action === 'getPredictions') {
+  $target = trim($body['username'] ?? '');
+  if ($me['role'] !== 'admin' && strtolower($target) !== strtolower($me['username'])) {
+    fail('Tidak diizinkan.', 403);
+  }
+  $preds = [];
+  $stmt = $db->prepare("SELECT mkey,res FROM predictions WHERE username=?");
+  $stmt->bind_param('s', $target); $stmt->execute();
+  $rr = $stmt->get_result();
+  while ($x = $rr->fetch_assoc()) $preds[$x['mkey']] = $x['res'];
+  $stmt = $db->prepare("SELECT name FROM users WHERE username=?");
+  $stmt->bind_param('s', $target); $stmt->execute();
+  $u = $stmt->get_result()->fetch_assoc();
+  out(['predictions' => (object)$preds, 'name' => $u['name'] ?? $target, 'username' => $target]);
+}
+
 /* ================= AKSI ADMIN ================= */
 if ($me['role'] !== 'admin') fail('Hanya admin yang boleh aksi ini.', 403);
 
